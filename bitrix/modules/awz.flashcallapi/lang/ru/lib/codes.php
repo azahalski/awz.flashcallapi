@@ -1,0 +1,6 @@
+<?php
+$MESS['AWZ_FLASHCALLAPI_CODES_FIELDS_ID'] = 'Идентификатор';
+$MESS['AWZ_FLASHCALLAPI_CODES_FIELDS_PHONE'] = 'Телефон';
+$MESS['AWZ_FLASHCALLAPI_CODES_FIELDS_EXT_ID'] = 'Внешний идентификатор';
+$MESS['AWZ_FLASHCALLAPI_CODES_FIELDS_CREATE_DATE'] = 'Дата создания';
+$MESS['AWZ_FLASHCALLAPI_CODES_FIELDS_PRM'] = 'Дополнительные параметры';
