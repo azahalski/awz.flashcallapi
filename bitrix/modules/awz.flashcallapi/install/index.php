@@ -107,15 +107,26 @@ class awz_flashcallapi extends CModule {
     {
         global $APPLICATION, $step;
 
-        $this->UnInstallDB();
+        $step = intval($step);
+        if($step < 2) { //выводим предупреждение
+            $APPLICATION->IncludeAdminFile(
+                Loc::getMessage('AWZ_FLASHCALLAPI_INSTALL_TITLE'),
+                $_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/'. $this->MODULE_ID .'/install/unstep.php'
+            );
+        }
+        elseif($step == 2) {
+            //проверяем условие
+            if($_REQUEST['save'] != 'Y' && !isset($_REQUEST['save'])) {
+                $this->UnInstallDB();
+            }
+            $this->UnInstallFiles();
+            $this->UnInstallEvents();
+            $this->deleteAgents();
 
-        $this->UnInstallFiles();
-        $this->UnInstallEvents();
-        $this->deleteAgents();
+            ModuleManager::UnRegisterModule($this->MODULE_ID);
 
-        ModuleManager::UnRegisterModule($this->MODULE_ID);
-
-        return true;
+            return true;
+        }
     }
 
     function createAgents() {

@@ -11,10 +11,10 @@ use Bitrix\Main\Web\Json;
 
 Loc::loadMessages(__FILE__);
 
-class smsru extends TransportBase {
+class smsc extends TransportBase {
 
-    const API_URL = 'https://sms.ru/code/call';
-    const LANG_CODE_ERR = 'AWZ_FLASHCALLAPI_TRANSPORTS_SMSRU_ERR_';
+    const API_URL = 'https://smsc.ru/sys/send.php';
+    const LANG_CODE_ERR = 'AWZ_FLASHCALLAPI_TRANSPORTS_SMSC_ERR_';
 
     public function __construct(array $params = array())
     {
@@ -22,12 +22,21 @@ class smsru extends TransportBase {
         if(!$this->getParameter('api_url')){
             $this->setParameter('api_url', self::API_URL);
         }
-        $this->setParameter('len_code', 4);
+        $this->setParameter('len_code', 6);
     }
 
     public static function getName(): string
     {
-        return Loc::getMessage('AWZ_FLASHCALLAPI_TRANSPORTS_SMSRU_NAME');
+        return Loc::getMessage('AWZ_FLASHCALLAPI_TRANSPORTS_SMSC_NAME');
+    }
+
+    public static function getConfig(): array
+    {
+        $fields = parent::getConfig();
+        unset($fields['api_key']);
+        $fields['login'] = parent::getConfigAdditional('login');
+        $fields['psw'] = parent::getConfigAdditional('psw');
+        return $fields;
     }
 
     public function getCode(string $phone, string $externalId, array $additionalParams = array()): Result
@@ -36,7 +45,7 @@ class smsru extends TransportBase {
 
         if(!isset($additionalParams['code'])){
             $result->addError(new Error(
-                Loc::getMessage('AWZ_FLASHCALLAPI_TRANSPORTS_SMSRU_ERR_CODE')
+                Loc::getMessage('AWZ_FLASHCALLAPI_TRANSPORTS_SMSC_ERR_CODE')
             ));
         }
 
@@ -55,10 +64,13 @@ class smsru extends TransportBase {
         $result = $this->sendRequest(
             $this->getParameter('api_url'),
             HttpClient::HTTP_POST, array(
-                'phone'=>$phone,
-                'ip'=>$this->getParameter('ip', '-1'),
-                'api_id'=>$this->getParameter('api_key'),
-                'partner_id'=>$this->getParameter('partner_id', '20782')
+                'phones'=>$phone,
+                'mes'=>'code',
+                'call'=>1,
+                'login'=>$this->getParameter('login'),
+                'psw'=>$this->getParameter('psw'),
+                'fmt'=>3,
+                'pp'=>$this->getParameter('partner_id', '327698')
             )
         );
 
@@ -77,20 +89,16 @@ class smsru extends TransportBase {
 
         $data = Json::decode($responseResult);
 
-        if(isset($data['status']) && $data['status'] == 'OK'){
+        if(isset($data['id']) && $data['id']){
             $newData = array(
                 'original'=>$data,
-                'externalId'=>$data['call_id'],
+                'externalId'=>$data['id'],
                 'additionalParams'=>array('code'=>$data['code'])
             );
             $result->setData($newData);
-        }elseif(isset($data['status']) && $data['status'] == 'ERROR' && $data['status_text']){
-            $result->addError(new Error(
-                $data['status_text'], 0
-            ));
         }else{
             $result->addError(new Error(
-                Loc::getMessage('AWZ_FLASHCALLAPI_TRANSPORTS_SMSRU_ERR_UNKNOWN'), 0
+                Loc::getMessage('AWZ_FLASHCALLAPI_TRANSPORTS_SMSC_ERR_UNKNOWN'), 0
             ));
         }
 
@@ -99,27 +107,20 @@ class smsru extends TransportBase {
 
     private function checkError(string $responseResult): Result
     {
-
         $result = new Result();
 
-        $responseResult = trim($responseResult);
-
-        $code = 0;
-        if($responseResult === '-1'){
-            $code = 1;
-        }else{
-            if(strlen($responseResult) == strlen(intval($responseResult))){
-                $code = (int) $responseResult;
-            }
-        }
-
         $message = '';
-        if($code){
-            $message = Loc::getMessage(self::LANG_CODE_ERR.$code);
-            if(!$message){
-                $message = Loc::getMessage(self::LANG_CODE_ERR.'0');
+        $code = 0;
+        try{
+            $data = Json::decode($responseResult);
+            if($data['error'] && $data['error_code']){
+                $code = $data['error_code'];
+                $message = Loc::getMessage(self::LANG_CODE_ERR.$data['error_code']);
+                if(!$message) $message = $data['error'];
+                if(!$message) $message = Loc::getMessage('AWZ_FLASHCALLAPI_TRANSPORTS_SMSC_ERR_UNKNOWN');
             }
-            if(!$message) $message = 'unknown error';
+        }catch (\Exception $e){
+            $message = Loc::getMessage('AWZ_FLASHCALLAPI_TRANSPORTS_SMSC_ERR_UNKNOWN');
         }
 
         if($message){
@@ -130,7 +131,6 @@ class smsru extends TransportBase {
         }
 
         return $result;
-
     }
 
 }

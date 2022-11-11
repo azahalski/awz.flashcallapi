@@ -14,11 +14,6 @@ Loc::loadMessages(__FILE__);
 
 abstract class TransportBase extends Parameters {
 
-    public function __construct(array $params = array())
-    {
-        $this->setParameters($params);
-    }
-
     public static function getConfig(): array
     {
         return array(
@@ -47,6 +42,41 @@ abstract class TransportBase extends Parameters {
                 )
             ),
         );
+    }
+
+    public static function getConfigAdditional(string $name): ?Fields\BaseField
+    {
+        switch ($name) {
+            case 'login':
+                $field = new Fields\Text(
+                    array(
+                        'title' => Loc::getMessage('AWZ_FLASHCALLAPI_TBASE_FIELD_LOGIN'),
+                        'inputName' => 'login',
+                        'inputValue' => '',
+                        'inputClass' => '',
+                    )
+                );
+                break;
+            case 'psw':
+                $field = new Fields\Text(
+                    array(
+                        'title' => Loc::getMessage('AWZ_FLASHCALLAPI_TBASE_FIELD_PSW'),
+                        'inputName' => 'psw',
+                        'inputValue' => '',
+                        'inputClass' => '',
+                    )
+                );
+                break;
+            default:
+                $field = null;
+        }
+
+        return $field;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->getParameter('dsbl') != 'Y';
     }
 
     protected function configHttpClient(): HttpClient

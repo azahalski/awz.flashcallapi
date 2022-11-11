@@ -6,6 +6,7 @@ use Bitrix\Main\Errorable;
 use Bitrix\Main\ErrorCollection;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Result;
+use Bitrix\Main\Config\Option;
 
 Loc::loadMessages(__FILE__);
 
@@ -21,10 +22,49 @@ class Sender implements Errorable{
     function __construct(string $transportName=self::DEF_TRANSPORT_NAME)
     {
         $this->errorCollection = new ErrorCollection();
+
+        $currentServices = unserialize(Option::get(Helper::MODULE_ID, 'SERV_ADD', "", ""));
+        if(!$currentServices) $currentServices = array();
+
+        $classCandidates = array();
+        $key = array_search($transportName, $currentServices);
+        if($key !== false){
+            $class = $currentServices[$key];
+            $classCandidates[] = $class;
+        }elseif($transportName === self::DEF_TRANSPORT_NAME){
+            foreach($currentServices as $class){
+                if(!in_array($class, $classCandidates))
+                    $classCandidates[] = $class;
+            }
+        }
+
+        $lastTransport = null;
+        foreach($classCandidates as $class){
+            $className = Helper::DEF_NAMESPACE.$class;
+            if(class_exists($className) && method_exists($className, 'getName')){
+                $currentClValues = unserialize(Option::get(Helper::MODULE_ID, 'T_PARAMS_'.$class, "", ""));
+                if(!$currentClValues) $currentClValues = array();
+                if(!$lastTransport){
+                    $lastTransport = new $className($currentClValues);
+                }else{
+                    /* @var TransportBase $lastTransport */
+                    if($lastTransport && !$lastTransport->isEnabled()){
+                        $lastTransport = new $className($currentClValues);
+                    }
+                }
+                if($lastTransport && $lastTransport->isEnabled()){
+                    break;
+                }
+            }
+        }
+
+        $this->setTransport($lastTransport);
+
     }
 
     public function send(string $phone, string $code=""): Result
     {
+
         if(!empty($this->getErrors())){
             $result = new Result();
             $result->addErrors($this->getErrors());
@@ -32,9 +72,35 @@ class Sender implements Errorable{
         }
         $result = $this->transport->send($phone, $code);
 
+        /* @var Result $result */
+        if($result->isSuccess()){
+            $data = $result->getData();
+            $addResult = CodesTable::add(array(
+                'PHONE'=>$phone,
+                'EXT_ID'=>$data['externalId'],
+                'CREATE_DATE'=>\Bitrix\Main\Type\DateTime::createFromTimestamp(time()),
+                'PRM'=>$data['additionalParams'] ?: array()
+            ));
+            if($addResult->isSuccess()){
+                $result = new Result();
+                $result->setData(array(
+                    'id'=>$addResult->getId()
+                ));
+            }else{
+                $result->addErrors($addResult->getErrors());
+            }
+        }
+
         return $result;
     }
 
+    /**
+     * @param int $id
+     * @return \Bitrix\Main\Result
+     * @throws \Bitrix\Main\ArgumentException
+     * @throws \Bitrix\Main\ObjectPropertyException
+     * @throws \Bitrix\Main\SystemException
+     */
     public function getCode(int $id): Result
     {
         if(!empty($this->getErrors())){
@@ -71,6 +137,11 @@ class Sender implements Errorable{
     public function setTransport(TransportBase $transport): Sender
     {
         $this->transport = $transport;
+        if(!$transport->isEnabled()){
+            $this->addError(new Error(
+                Loc::getMessage('AWZ_FLASHCALLAPI_SENDER_DSBL_TRANSPORT')
+            ));
+        }
         return $this;
     }
 

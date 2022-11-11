@@ -7,11 +7,6 @@ use Awz\FlashCallApi\Dict\Parameters;
 
 abstract class BaseField extends Parameters {
 
-    public function __construct(array $params = array())
-    {
-        $this->setParameters($params);
-    }
-
     public function getHtml($defaultValue=''): string
     {
         $html = '<input type="text" name="'

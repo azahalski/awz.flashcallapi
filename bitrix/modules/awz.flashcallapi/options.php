@@ -24,25 +24,23 @@ Loader::includeModule($module_id);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && $MODULE_RIGHT == "W" && strlen($_REQUEST["Update"]) > 0 && check_bitrix_sessid())
 {
+    $currentServices = unserialize(Option::get($module_id, 'SERV_ADD', "", ""));
+    if(!$currentServices) $currentServices = array();
+
+    $newServices = array();
     if($_REQUEST['SERV_ADD']!='-'){
-        $currentServices = unserialize(Option::get($module_id, 'SERV_ADD', "", ""));
-        if(!$currentServices) $currentServices = array();
         $candidate = preg_replace('/([^0-9A-z])/','', $_REQUEST['SERV_ADD']);
         $className = CurrentModule\Helper::DEF_NAMESPACE.$candidate;
         if(class_exists($className) && method_exists($className, 'getName')){
             if(array_search($candidate, $currentServices) === false)
-                $currentServices[] = $candidate;
+                $newServices[] = $candidate;
         }
-        Option::set($module_id, "SERV_ADD", serialize($currentServices));
     }
 
-    $newServices = array();
-    $currentServices = unserialize(Option::get($module_id, 'SERV_ADD', "", ""));
-    if(!$currentServices) $currentServices = array();
     foreach($currentServices as $class){
         $className = CurrentModule\Helper::DEF_NAMESPACE.$class;
         if(class_exists($className) && method_exists($className, 'getName')){
-            $keyParams = array_search($class.'0', $currentServices);
+            $keyParams = array_search($class, $currentServices);
             $currentValues = array();
             if($keyParams !== false){
                 $currentValues = unserialize(Option::get($module_id, 'T_PARAMS_'.$class, "", ""));
@@ -50,6 +48,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $MODULE_RIGHT == "W" && strlen($_REQ
             }
 
             $params = $className::getConfig();
+            $params['dsbl'] = new CurrentModule\Fields\CheckBox(
+                array(
+                    'title'=>Loc::getMessage('AWZ_FLASHCALLAPI_OPT_SERV_TITLE_DSBL'),
+                    'inputName'=>'dsbl',
+                    'inputValue'=>'N',
+                    'inputClass'=>'',
+                )
+            );
             foreach($params as $code=>$field){
                 $reqCode = $class.'_'.$field->getParameter('inputName');
                 $requestValue = Application::getInstance()->getContext()->getRequest()->get($reqCode);

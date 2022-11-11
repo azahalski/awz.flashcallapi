@@ -8,6 +8,7 @@ Loc::loadMessages(__FILE__);
 
 class Helper {
 
+    const MODULE_ID = "awz.flashcallapi";
     const DEF_NAMESPACE = '\\Awz\\FlashCallApi\\Transports\\';
 
     public static function getServicesList(){
