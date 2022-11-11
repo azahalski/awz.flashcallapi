@@ -130,10 +130,23 @@ class awz_flashcallapi extends CModule {
     }
 
     function createAgents() {
+
+        CAgent::AddAgent(
+            "\\Awz\\FlashCallApi\\Agents::agentDeleteOldCodes();",
+            $this->MODULE_ID,
+            "N",
+            86400);
+
         return true;
     }
 
     function deleteAgents() {
+
+        CAgent::RemoveAgent(
+            "\\Awz\\FlashCallApi\\Agents::agentDeleteOldCodes();",
+            $this->MODULE_ID
+        );
+
         return true;
     }
 
