@@ -1,11 +1,11 @@
 <!-- desc-start -->
 Маркетплейс 1с-Битрикс - https://marketplace.1c-bitrix.ru/solutions/awz.flashcallapi/
 
-##Описание
+## Описание
 Модуль содержит API для запроса звонков-кодов.<br>
 \* ввод последних цифр номера для подтверждения
 
-##Поддерживаемые шлюзы:
+## Поддерживаемые шлюзы:
 1. [SMSC.RU](https://smsc.ru/?ppmlife&utm_source=a_z&utm_medium=bitrix&utm_campaign=awz_flashcallapi)
 2. [SMS.RU](https://mlife.sms.ru/?utm_source=a_z&utm_medium=bitrix&utm_campaign=awz_flashcallapi)
 
@@ -13,7 +13,7 @@
 
 ## Документация
 <!-- dev-start -->
-###Awz\FlashCallApi\Sender::__construct
+### Awz\FlashCallApi\Sender::__construct
 
 <em>создает объект для работы с API модуля</em>
 
@@ -21,7 +21,7 @@
 | --- | --- | --- |
 | $transportName `string` | По умолчанию, первый активный или <br>первый неактивный (если нет активных) | Код транспорта с параметров компонента |
 
-###Awz\FlashCallApi\Sender::send
+### Awz\FlashCallApi\Sender::send
 
 <em>отправляет запрос на совершение звонка</em> 
 
@@ -37,7 +37,7 @@
 | --- | --- |
 | **id** `int` | ид запроса в базе данных на сайте |
 
-####пример 1
+#### пример 1
 
 ```php
 use Bitrix\Main\Loader;
@@ -59,7 +59,7 @@ if(Loader::includeModule('awz.flashcallapi')){
 }
 ```
 
-###Awz\FlashCallApi\Sender::getCode
+### Awz\FlashCallApi\Sender::getCode
 
 <em>получение кода по идентификатору запроса</em> 
 
@@ -99,12 +99,12 @@ if(Loader::includeModule('awz.flashcallapi')){
 }
 ```
 
-###Awz\FlashCallApi\Sender::getTransport
+### Awz\FlashCallApi\Sender::getTransport
 
 <em>возвращает текущий установленный транспорт </em><br>
 `MyTransport` наследник `\Awz\FlashCallApi\TransportBase`
 
-###Awz\FlashCallApi\Sender::setTransport
+### Awz\FlashCallApi\Sender::setTransport
 
 <em>установка транспорта минуя параметры модуля </em><br>
 
