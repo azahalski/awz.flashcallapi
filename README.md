@@ -106,6 +106,6 @@ if(Loader::includeModule('awz.flashcallapi')){
 
 ### Awz\FlashCallApi\Sender::setTransport
 
-<em>установка транспорта минуя параметры модуля </em><br>
+<em>установка транспорта минуя параметры модуля </em>
 
 <!-- dev-end -->
