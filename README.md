@@ -50,7 +50,7 @@ if(Loader::includeModule('awz.flashcallapi')){
         $dataResult = $result->getData();
         $id = $dataResult['id'];
         if($id){
-            $rowData = CodesTable::getRowById();
+            $rowData = CodesTable::getRowById($id);
             print_r($rowData);
         }
     }else{
