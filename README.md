@@ -1,9 +1,15 @@
+# AWZ: Секретный звонок (awz.flashcallapi)
+
+### [Установка модуля](https://github.com/zahalski/awz.flashcallapi/tree/main/docs/install.md)
+
 <!-- desc-start -->
-Маркетплейс 1с-Битрикс - https://marketplace.1c-bitrix.ru/solutions/awz.flashcallapi/
 
 ## Описание
 Модуль содержит API для запроса звонков-кодов.<br>
 \* ввод последних цифр номера для подтверждения
+
+**Поддерживаемые редакции CMS Битрикс:**<br>
+«Старт», «Стандарт», «Малый бизнес», «Бизнес», «Корпоративный портал», «Энтерпрайз», «Интернет-магазин + CRM»
 
 ## Поддерживаемые шлюзы:
 1. [SMSC.RU](https://smsc.ru/?ppmlife&utm_source=a_z&utm_medium=bitrix&utm_campaign=awz_flashcallapi)
