@@ -52,17 +52,23 @@ print(SITE_CHARSET);
 
 - Переходим в папку /dist/
 - Распаковываем еще 1 архив внутри нее, результатом должна быть папка с названием `.last_version`
+
 ![](https://zahalski.dev/images/modules/003-install.png)
+
 - Переименовываем папку из .last_version в awz.flashcallapi
 - Копируем нашу папку dist\awz.flashcallapi в папку \bitrix\modules\ вашего сайта
 4) Проверяем или все верно
 - Вместо awz.module на изображении Ваша папка будет с названием `awz.flashcallapi`
+
 ![](https://zahalski.dev/images/modules/001-install.png)
+
 После перехода в папку у модуля будет структура с папками: `install` и файлом `include.php` в корне
+
 ![](https://zahalski.dev/images/modules/002-install.png)
   
 5) Устанавливаем модуль в админ панели, переходим на вкладку `Маркетплейс` -> `Установленные решения`
 6) Выбираем модуль с кодом awz.flashcallapi и нажимаем установить
 
 ![](https://zahalski.dev/images/modules/004-install.png)
+
 <!-- install-end -->
