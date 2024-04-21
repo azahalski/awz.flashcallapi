@@ -116,3 +116,11 @@ if(Loader::includeModule('awz.flashcallapi')){
 <em>установка транспорта минуя параметры модуля </em>
 
 <!-- dev-end -->
+
+
+<!-- cl-start -->
+## История версий
+
+https://github.com/zahalski/awz.flashcallapi/blob/master/CHANGELOG.md
+
+<!-- cl-end -->
