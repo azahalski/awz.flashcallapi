@@ -1,7 +1,7 @@
 # AWZ: Секретный звонок (awz.flashcallapi)
 
-### [Установка модуля](https://github.com/zahalski/awz.flashcallapi/tree/main/docs/install.md)
-### [Настройка модуля](https://github.com/zahalski/awz.flashcallapi/tree/main/docs/settings.md)
+### [Установка модуля](https://github.com/azahalski/awz.flashcallapi/tree/main/docs/install.md)
+### [Настройка модуля](https://github.com/azahalski/awz.flashcallapi/tree/main/docs/settings.md)
 
 <!-- desc-start -->
 
@@ -121,6 +121,6 @@ if(Loader::includeModule('awz.flashcallapi')){
 <!-- cl-start -->
 ## История версий
 
-https://github.com/zahalski/awz.flashcallapi/blob/master/CHANGELOG.md
+https://github.com/azahalski/awz.flashcallapi/blob/master/CHANGELOG.md
 
 <!-- cl-end -->
